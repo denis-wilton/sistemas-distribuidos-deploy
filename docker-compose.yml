@@ -1,0 +1,50 @@
+version: "3.8"
+
+# Stack swarm
+
+services:
+  chat:
+    image: sistemas-distribuidos-chat
+    ports:
+      - 8080:8080
+    deploy:
+      mode: replicated
+      replicas: 1
+    networks:
+      - sistemas-distribuidos-network
+
+  market-data:
+    image: sistemas-distribuidos-market-data
+    ports:
+      - 8081:8081
+    deploy:
+      mode: replicated
+      replicas: 1
+    networks:
+      - sistemas-distribuidos-network
+
+  frontend:
+    image: sistemas-distribuidos-frontend
+    ports:
+      - 3000:3000
+    deploy:
+      mode: replicated
+      replicas: 1
+    networks:
+      - sistemas-distribuidos-network
+
+  nginx-proxy:
+    image: nginx:latest
+    ports:
+      - 80:80
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+    networks:
+      - sistemas-distribuidos-network
+    deploy:
+      mode: replicated
+      replicas: 1
+
+networks:
+  sistemas-distribuidos-network:
+    driver: overlay
